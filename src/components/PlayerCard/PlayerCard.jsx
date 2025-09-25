@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import userImg from "../../assets/Group.png";
 import flagImg from "../../assets/flag.png";
+import { toast } from "react-toastify";
 
-const PlayerCard = ({player}) => {
 
+const PlayerCard = ({ player, setAvailableBalance, availableBalance, purchasedPlayers, setPurchasedPlayers }) => {
+  const [isSelected, setIsSelected] = useState(false);
 
-    
+  const handleSelected = (playerData) => {
+
+    const playerPrice = parseInt(playerData.price.split("USD").join("").split(",").join(""))
+
+    if(availableBalance < playerPrice) {
+      toast("Not Enough Coins!!")
+      return
+    }
+    if(purchasedPlayers.length === 6) {
+      toast("6 players already selected")
+      return
+    }
+
+    setIsSelected(true);
+    setAvailableBalance(availableBalance - playerPrice
+    );
+    setPurchasedPlayers([...purchasedPlayers, playerData])
+  };
+
   return (
     <div className="card bg-base-100 shadow-sm p-4">
       <figure>
@@ -42,7 +62,9 @@ const PlayerCard = ({player}) => {
 
         <div className="card-actions mt-4 flex justify-between items-center">
           <p className="font-bold">Price: {player.price}</p>
-          <button className="btn">Choose player</button>
+          <button disabled={isSelected} onClick={() => {handleSelected(player)}} className="btn">
+            {isSelected === true ? "Selected" : "Choose Player"}
+          </button>
         </div>
       </div>
     </div>
